@@ -1,0 +1,5 @@
+export enum ActivityType {
+  CREATED = 'CREATED',
+  STATUS_CHANGED = 'STATUS_CHANGED',
+  ASSIGNED = 'ASSIGNED',
+}
