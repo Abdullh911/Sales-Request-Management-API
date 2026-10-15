@@ -8,10 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ActivityType } from '../common/enums/activity-type.enum';
-import {
-  ALLOWED_STATUS_TRANSITIONS,
-  RequestStatus,
-} from '../common/enums/request-status.enum';
+import { ALLOWED_STATUS_TRANSITIONS, RequestStatus } from '../common/enums/request-status.enum';
 import { Role } from '../common/enums/role.enum';
 import { AuthenticatedUser } from '../common/interfaces/authenticated-user.interface';
 import { User } from '../users/entities/user.entity';
@@ -297,10 +294,7 @@ export class RequestsService {
   /**
    * 4. Get activity history for a specific request.
    */
-  async getActivities(
-    id: string,
-    user: AuthenticatedUser,
-  ): Promise<ActivityLog[]> {
+  async getActivities(id: string, user: AuthenticatedUser): Promise<ActivityLog[]> {
     const request = await this.requestsRepository.findOne({ where: { id } });
     if (!request) {
       throw new NotFoundException(`Sales request with ID "${id}" not found.`);
@@ -314,10 +308,7 @@ export class RequestsService {
     });
   }
 
-  private assertAccessPermission(
-    request: SalesRequest,
-    user: AuthenticatedUser,
-  ): void {
+  private assertAccessPermission(request: SalesRequest, user: AuthenticatedUser): void {
     if (user.role === Role.ADMIN) {
       return;
     }

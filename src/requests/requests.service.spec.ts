@@ -150,11 +150,7 @@ describe('RequestsService', () => {
       };
       mockRequestsRepo.createQueryBuilder.mockReturnValueOnce(mockQb);
 
-      const result = await service.assignAgent(
-        'req-uuid-1',
-        { agentId: agentOne.id },
-        adminUser,
-      );
+      const result = await service.assignAgent('req-uuid-1', { agentId: agentOne.id }, adminUser);
 
       expect(result.assignedAgentId).toBe(agentOne.id);
       expect(mockActivitiesRepo.save).toHaveBeenCalledWith(
@@ -212,11 +208,7 @@ describe('RequestsService', () => {
       };
       mockRequestsRepo.createQueryBuilder.mockReturnValueOnce(mockQb);
 
-      const result = await service.assignAgent(
-        'req-uuid-1',
-        { agentId: agentOne.id },
-        adminUser,
-      );
+      const result = await service.assignAgent('req-uuid-1', { agentId: agentOne.id }, adminUser);
 
       expect(result.assignedAgentId).toBe(agentOne.id);
     });
@@ -268,11 +260,7 @@ describe('RequestsService', () => {
       });
 
       await expect(
-        service.updateStatus(
-          'req-uuid-1',
-          { status: RequestStatus.QUALIFIED },
-          agentOne,
-        ),
+        service.updateStatus('req-uuid-1', { status: RequestStatus.QUALIFIED }, agentOne),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -284,11 +272,7 @@ describe('RequestsService', () => {
       });
 
       await expect(
-        service.updateStatus(
-          'req-uuid-1',
-          { status: RequestStatus.QUALIFIED },
-          adminUser,
-        ),
+        service.updateStatus('req-uuid-1', { status: RequestStatus.QUALIFIED }, adminUser),
       ).rejects.toThrow(BadRequestException);
     });
 
@@ -300,11 +284,7 @@ describe('RequestsService', () => {
       });
 
       await expect(
-        service.updateStatus(
-          'req-uuid-1',
-          { status: RequestStatus.CONTACTED },
-          agentTwo,
-        ),
+        service.updateStatus('req-uuid-1', { status: RequestStatus.CONTACTED }, agentTwo),
       ).rejects.toThrow(ForbiddenException);
     });
   });
@@ -326,10 +306,9 @@ describe('RequestsService', () => {
         agentOne,
       );
 
-      expect(mockQb.andWhere).toHaveBeenCalledWith(
-        'request.assignedAgentId = :agentId',
-        { agentId: agentOne.id },
-      );
+      expect(mockQb.andWhere).toHaveBeenCalledWith('request.assignedAgentId = :agentId', {
+        agentId: agentOne.id,
+      });
       expect(res.meta).toEqual({
         total: 0,
         page: 1,

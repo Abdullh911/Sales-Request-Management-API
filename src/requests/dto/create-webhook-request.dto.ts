@@ -14,9 +14,7 @@ export class CreateWebhookRequestDto {
   @MaxLength(150)
   customerName: string;
 
-  @Transform(({ value }) =>
-    typeof value === 'string' ? value.trim().toLowerCase() : value,
-  )
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value))
   @IsEmail({}, { message: 'email must be a valid email address' })
   @IsNotEmpty({ message: 'email is required' })
   @MaxLength(255)

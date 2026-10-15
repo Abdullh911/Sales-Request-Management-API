@@ -8,10 +8,7 @@ import { RequestsService } from './requests.service';
 import { WebhooksController } from './webhooks.controller';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([SalesRequest, ActivityLog]),
-    UsersModule,
-  ],
+  imports: [TypeOrmModule.forFeature([SalesRequest, ActivityLog]), UsersModule],
   controllers: [WebhooksController, RequestsController],
   providers: [RequestsService],
   exports: [RequestsService],

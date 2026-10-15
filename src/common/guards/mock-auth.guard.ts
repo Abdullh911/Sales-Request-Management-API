@@ -11,8 +11,7 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
 import { Role } from '../enums/role.enum';
 import { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 
-const UUID_REGEX =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Mock authentication guard.
@@ -53,9 +52,7 @@ export class MockAuthGuard implements CanActivate {
 
     const trimmedUserId = userId.trim();
     if (!UUID_REGEX.test(trimmedUserId)) {
-      throw new UnauthorizedException(
-        'Invalid "x-user-id" header format. Expected a valid UUID.',
-      );
+      throw new UnauthorizedException('Invalid "x-user-id" header format. Expected a valid UUID.');
     }
 
     // Look up the user from the database or fall back to the fixed seed mapping
