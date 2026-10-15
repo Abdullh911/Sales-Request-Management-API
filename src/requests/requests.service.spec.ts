@@ -173,6 +173,53 @@ describe('RequestsService', () => {
         service.assignAgent('req-uuid-1', { agentId: agentOne.id }, agentOne),
       ).rejects.toThrow(ForbiddenException);
     });
+
+    it('should throw NotFoundException if assigned agent does not exist', async () => {
+      const existingRequest: Partial<SalesRequest> = {
+        id: 'req-uuid-1',
+        status: RequestStatus.NEW,
+      };
+      mockRequestsRepo.findOne.mockResolvedValueOnce(existingRequest);
+      mockUsersRepo.findOne.mockResolvedValueOnce(null);
+
+      await expect(
+        service.assignAgent('req-uuid-1', { agentId: 'non-existent-agent' }, adminUser),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should allow Admin to assign a CLOSED request', async () => {
+      const closedRequest: Partial<SalesRequest> = {
+        id: 'req-uuid-1',
+        status: RequestStatus.CLOSED,
+        assignedAgentId: null,
+      };
+
+      mockRequestsRepo.findOne.mockResolvedValueOnce(closedRequest);
+      mockUsersRepo.findOne.mockResolvedValueOnce({
+        id: agentOne.id,
+        name: 'Bob Agent',
+        role: Role.AGENT,
+      });
+
+      const mockQb = {
+        leftJoinAndSelect: jest.fn().mockReturnThis(),
+        where: jest.fn().mockReturnThis(),
+        orderBy: jest.fn().mockReturnThis(),
+        getOne: jest.fn().mockResolvedValue({
+          ...closedRequest,
+          assignedAgentId: agentOne.id,
+        }),
+      };
+      mockRequestsRepo.createQueryBuilder.mockReturnValueOnce(mockQb);
+
+      const result = await service.assignAgent(
+        'req-uuid-1',
+        { agentId: agentOne.id },
+        adminUser,
+      );
+
+      expect(result.assignedAgentId).toBe(agentOne.id);
+    });
   });
 
   describe('3. Status Progression (NEW -> CONTACTED -> QUALIFIED -> CLOSED) & Permissions', () => {

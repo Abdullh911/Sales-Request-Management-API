@@ -127,4 +127,13 @@ describe('Sales Request Management API (e2e controller + guard + validation pipe
 
     expect(res.body.assignedAgentId).toBe(AGENT_ID);
   });
+
+  it('PATCH /requests/:id/assign -> rejects agent claiming to be ADMIN (401)', async () => {
+    await request(app.getHttpServer())
+      .patch(`/requests/${REQ_ID}/assign`)
+      .set('x-user-id', AGENT_ID)
+      .set('x-user-role', Role.ADMIN)
+      .send({ agentId: AGENT_ID })
+      .expect(401);
+  });
 });

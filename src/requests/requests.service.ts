@@ -196,30 +196,17 @@ export class RequestsService {
       throw new NotFoundException(`Sales request with ID "${id}" not found.`);
     }
 
-    if (request.status === RequestStatus.CLOSED) {
-      throw new BadRequestException(
-        'Cannot reassign a sales request that is already CLOSED.',
-      );
-    }
-
-    let agent = await this.usersRepository.findOne({
+    const agent = await this.usersRepository.findOne({
       where: { id: dto.agentId },
     });
 
-    if (agent && agent.role !== Role.AGENT) {
-      throw new BadRequestException(
-        `User "${agent.name}" (${dto.agentId}) has role ${agent.role} and is not an AGENT.`,
-      );
+    if (!agent) {
+      throw new NotFoundException(`Agent with ID "${dto.agentId}" not found.`);
     }
 
-    if (!agent) {
-      agent = await this.usersRepository.save(
-        this.usersRepository.create({
-          id: dto.agentId,
-          name: `Agent ${dto.agentId.slice(0, 8)}`,
-          email: `agent-${dto.agentId.slice(0, 8)}@company.example.com`,
-          role: Role.AGENT,
-        }),
+    if (agent.role !== Role.AGENT) {
+      throw new BadRequestException(
+        `User "${agent.name}" (${dto.agentId}) has role ${agent.role} and is not an AGENT.`,
       );
     }
 
